@@ -1,0 +1,21 @@
+<h2>Vendas</h2>
+
+<form method="post">
+    <select name="produto">
+        {% for p in produtos %}
+        <option value="{{p[0]}}">{{p[1]}}</option>
+        {% endfor %}
+    </select>
+
+    <input name="qtd" placeholder="Quantidade">
+    <button>Vender</button>
+</form>
+
+<hr>
+
+<h3>Histórico</h3>
+<ul>
+{% for v in vendas %}
+    <li>{{v[1]}} - Qtd: {{v[2]}} - Total: R$ {{v[3]}}</li>
+{% endfor %}
+</ul>

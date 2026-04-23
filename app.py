@@ -1,11 +1,16 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import os
 
 app = Flask(__name__)
 app.secret_key = "123"
 
+# -------- BANCO --------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "farmacia.db")
+
 def db():
-    return sqlite3.connect("farmacia.db")
+    return sqlite3.connect(db_path)
 
 def criar():
     conn = db()
@@ -37,8 +42,14 @@ def criar():
     )
     """)
 
+    # 👇 cria usuário padrão
+    c.execute("INSERT OR IGNORE INTO usuarios(id, user, senha) VALUES (1, 'admin', '123')")
+
     conn.commit()
     conn.close()
+
+# 🔥 ESSA LINHA RESOLVE SEU ERRO NO RENDER
+criar()
 
 # -------- LOGIN --------
 @app.route("/", methods=["GET","POST"])
@@ -104,11 +115,9 @@ def vendas():
 
             total = preco * qtd
 
-            # baixa estoque
             novo = estoque - qtd
             c.execute("UPDATE produtos SET estoque=? WHERE id=?", (novo, produto_id))
 
-            # salva venda
             c.execute("INSERT INTO vendas(produto, quantidade, total) VALUES(?,?,?)",
                       (nome, qtd, total))
 
@@ -124,17 +133,6 @@ def vendas():
 
     return render_template("vendas.html", produtos=produtos, vendas=vendas)
 
-# -------- CRIAR USUARIO --------
-@app.route("/criar")
-def criar_user():
-    conn = db()
-    c = conn.cursor()
-    c.execute("INSERT INTO usuarios(user, senha) VALUES('admin','123')")
-    conn.commit()
-    conn.close()
-    return "Usuário criado: admin / 123"
-
 # -------- EXEC --------
 if __name__ == "__main__":
-    criar()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

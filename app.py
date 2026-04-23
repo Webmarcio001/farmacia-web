@@ -134,5 +134,3 @@ def vendas():
     return render_template("vendas.html", produtos=produtos, vendas=vendas)
 
 # -------- EXEC --------
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

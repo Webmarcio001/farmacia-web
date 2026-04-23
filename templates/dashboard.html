@@ -1,0 +1,18 @@
+<h2>Produtos</h2>
+
+<form method="post">
+    <input name="nome" placeholder="Nome">
+    <input name="preco" placeholder="Preço">
+    <input name="estoque" placeholder="Estoque">
+    <button>Salvar</button>
+</form>
+
+<hr>
+
+<a href="/vendas">Ir para vendas</a>
+
+<ul>
+{% for p in produtos %}
+    <li>{{p[1]}} - R$ {{p[2]}} - Estoque: {{p[3]}}</li>
+{% endfor %}
+</ul>
